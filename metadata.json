@@ -1,0 +1,9 @@
+{
+  "name": "Copy of MindStream",
+  "description": "A smart personal thought journal with AI-powered categorization, pattern detection, and context-aware insights.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation",
+    "camera"
+  ]
+}
