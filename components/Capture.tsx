@@ -44,8 +44,9 @@ const Capture: React.FC<CaptureProps> = ({ onSave, isSaving }) => {
         setText(prev => prev + newText);
     },
     onError: (err) => {
-        setVoiceError("Voice connection interrupted. Partial text saved.");
-        setTimeout(() => setVoiceError(null), 4000);
+        setVoiceError(err.message || "Voice connection interrupted.");
+        // Increased timeout to 8 seconds so user can read System Settings instructions
+        setTimeout(() => setVoiceError(null), 8000);
     }
   });
 
@@ -185,9 +186,9 @@ const Capture: React.FC<CaptureProps> = ({ onSave, isSaving }) => {
             {/* --- ERROR TOAST --- */}
             {voiceError && (
                 <div className="absolute bottom-20 left-4 right-4 z-50 flex justify-center animate-in slide-in-from-bottom-4">
-                    <div className="bg-red-50 text-red-600 border border-red-100 px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm font-medium">
-                        <AlertCircle size={18} />
-                        {voiceError}
+                    <div className="bg-red-50 text-red-600 border border-red-100 px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 text-sm font-medium max-w-full">
+                        <AlertCircle size={18} className="flex-shrink-0" />
+                        <span className="truncate">{voiceError}</span>
                     </div>
                 </div>
             )}
