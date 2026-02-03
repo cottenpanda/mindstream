@@ -154,7 +154,36 @@ const CalendarView: React.FC<CalendarViewProps> = ({
 
   const selectedEntries = useMemo(() => {
       const key = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
-      return (entryMap.get(key) || []).sort((a, b) => b.timestamp - a.timestamp);
+      const dayEntries = entryMap.get(key) || [];
+      
+      // Calculate frequencies for this day
+      const frequencies: Record<string, number> = {};
+      dayEntries.forEach(entry => {
+          const cat = entry.analysis?.category || 'Uncategorized';
+          frequencies[cat] = (frequencies[cat] || 0) + 1;
+      });
+
+      // Sort
+      return [...dayEntries].sort((a, b) => {
+          const catA = a.analysis?.category || 'Uncategorized';
+          const catB = b.analysis?.category || 'Uncategorized';
+          
+          const freqA = frequencies[catA];
+          const freqB = frequencies[catB];
+
+          // 1. Frequency Descending (Most frequent category first)
+          if (freqA !== freqB) {
+              return freqB - freqA;
+          }
+
+          // 2. Group same categories together if frequencies match
+          if (catA !== catB) {
+              return catA.localeCompare(catB);
+          }
+
+          // 3. Chronological Ascending (Morning -> Night) within the same category group
+          return a.timestamp - b.timestamp;
+      });
   }, [selectedDate, entryMap]);
 
   // Generate grid cells
@@ -347,7 +376,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-stone-400 text-center border border-dashed border-stone-200 rounded-2xl bg-white/50">
                     <CalendarIcon size={32} className="mb-3 opacity-20" />
-                    <p className="text-sm mb-6">No thoughts recorded specifically on this day.</p>
+                    <p className="text-sm mb-6 max-w-[220px] mx-auto leading-relaxed">No thoughts recorded specifically on this day.</p>
                     <button 
                         onClick={onAddThought}
                         className="px-6 py-3 bg-paper-ink text-white text-base font-medium rounded-full shadow-lg hover:bg-stone-800 hover:shadow-xl transition-all active:scale-95 flex items-center gap-2"

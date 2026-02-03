@@ -1,8 +1,7 @@
 import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
 import { JournalEntry, PatternInsight, RelatedContentItem, SmartAnalysis } from "../types";
 
-const apiKey = process.env.API_KEY || '';
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Helper to get a clear date string for context
 const getCurrentDateContext = () => {
@@ -37,9 +36,6 @@ async function withRetry<T>(operation: () => Promise<T>, retries = 3, delay = 10
 // --- 1. Smart Analysis & Coaching ---
 
 export const analyzeEntry = async (text: string, images?: string[]): Promise<SmartAnalysis> => {
-  if (!ai) {
-    return { category: "Uncategorized", tags: [], sentiment: "neutral", moodEmoji: "📝", actionable: false };
-  }
   try {
     const parts: any[] = [];
     
@@ -129,7 +125,6 @@ export const analyzeEntry = async (text: string, images?: string[]): Promise<Sma
 // --- 2. Related Content Pulling (Grounding) ---
 
 export const findRelatedContent = async (text: string, category: string, tags: string[] = []): Promise<RelatedContentItem[]> => {
-  if (!ai) return [];
   try {
     const today = getCurrentDateContext();
     const tagsContext = tags.length > 0 ? `Keywords/Tags identified: ${tags.join(', ')}.` : '';
@@ -185,7 +180,7 @@ export const findRelatedContent = async (text: string, category: string, tags: s
 // --- 3. Pattern Detection & Nudges ---
 
 export const detectPatterns = async (entries: JournalEntry[]): Promise<PatternInsight[]> => {
-  if (!ai || entries.length < 3) return [];
+  if (entries.length < 3) return [];
 
   const today = getCurrentDateContext();
 

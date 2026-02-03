@@ -4,6 +4,7 @@ import Capture from './components/Capture';
 import JournalEntryCard from './components/JournalEntryCard';
 import Insights from './components/Insights';
 import CalendarView from './components/CalendarView';
+import SplashScreen from './components/SplashScreen';
 import { JournalEntry, ViewState, LocationData, PatternInsight } from './types';
 import { analyzeEntry, findRelatedContent } from './services/geminiService';
 
@@ -11,6 +12,8 @@ const STORAGE_KEY = 'mindstream_entries_v1';
 const INSIGHTS_KEY = 'mindstream_insights_v1';
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
   // Changed default view to 'journal' (Library)
   const [view, setView] = useState<ViewState>('journal');
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -185,10 +188,19 @@ export default function App() {
     return currentStreak;
   }, [entries]);
 
+  // --- RENDER SPLASH SCREEN IF ACTIVE ---
+  if (showSplash) {
+      return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   return (
-    // Fixed inset-0 creates a full-screen app container.
-    <div className="fixed inset-0 bg-[#1F1F1F] flex items-center justify-center p-4">
-      <div className="relative w-full max-w-md h-[95vh] flex flex-col bg-paper-bg text-paper-ink overflow-hidden rounded-2xl shadow-2xl">
+    // Full Screen Container (No mock device frame)
+    <div 
+        className="relative w-full h-screen bg-paper-bg text-paper-ink flex flex-col overflow-hidden animate-fade-in"
+        style={{
+             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E")`
+        }}
+    >
       
       {/* Header - Compact version */}
       <header className="absolute top-0 left-0 right-0 z-50 bg-paper-bg/95 backdrop-blur-md border-b border-stone-100/50 py-3 shadow-sm transition-all">
@@ -258,7 +270,7 @@ export default function App() {
                             {activeFilter ? "No matching thoughts." : "The page is blank."}
                         </h3>
                         <p className="text-stone-500 max-w-xs mx-auto mb-8">
-                             {activeFilter ? "Try clearing the filter or adding a new one." : "Time to plant some seeds."}
+                             {activeFilter ? "Try clearing the filter or adding a new one." : "Capture a thought. Write whatever’s on your mind."}
                         </p>
                         {activeFilter ? (
                              <button 
@@ -363,6 +375,5 @@ export default function App() {
         </div>
       </nav>
     </div>
-</div>
   );
 }

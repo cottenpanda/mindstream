@@ -98,9 +98,10 @@ const JournalEntryCard: React.FC<Props> = ({ entry, onExplore, isLoadingRelated,
       e.stopPropagation();
       if (menuButtonRef.current) {
           const rect = menuButtonRef.current.getBoundingClientRect();
+          // Use viewport coordinates (fixed positioning)
           setMenuPosition({
-              top: rect.bottom + window.scrollY + 4,
-              left: rect.right - 192 + window.scrollX // Adjusted to 192 (w-48) to fit text
+              top: rect.bottom + 4,
+              left: rect.right - 192 // Adjusted to 192 (w-48) to fit text
           });
       }
       setShowMenu(!showMenu);
@@ -388,7 +389,7 @@ const JournalEntryCard: React.FC<Props> = ({ entry, onExplore, isLoadingRelated,
       
       {/* === MENU PORTAL === */}
       {showMenu && createPortal(
-          <div className="fixed inset-0 z-[9999]">
+          <div className="fixed inset-0 z-[9999] pointer-events-auto">
              {/* Invisible backdrop to capture clicks */}
              <div className="absolute inset-0" onClick={() => setShowMenu(false)} />
              
@@ -456,7 +457,7 @@ const JournalEntryCard: React.FC<Props> = ({ entry, onExplore, isLoadingRelated,
 
       {/* === BOTTOM SHEET / MODAL OVERLAY (PORTAL) === */}
       {activeSheet && createPortal(
-          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-auto">
              {/* Backdrop */}
              <div 
                 className="absolute inset-0 bg-stone-900/40 backdrop-blur-sm animate-in fade-in duration-300" 
