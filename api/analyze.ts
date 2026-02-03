@@ -91,7 +91,7 @@ async function analyzeEntry(text: string, images?: string[]) {
   });
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-1.5-flash-latest",
     contents: { parts },
     config: {
       responseMimeType: "application/json",
@@ -124,7 +124,7 @@ async function findRelatedContent(text: string, category: string, tags: string[]
   const tagsContext = tags.length > 0 ? `Keywords/Tags: ${tags.join(', ')}.` : '';
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-1.5-flash-latest",
     contents: `Context: Today is ${today}.
     Journal entry (${category}): "${text}". ${tagsContext}
     Find 5 relevant external resources (articles, tools, guides).`,
@@ -159,7 +159,7 @@ async function detectPatterns(entries: any[]) {
   }));
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-1.5-flash-latest",
     contents: `Context: Today is ${today}.
     Journal entries: ${JSON.stringify(recentEntries)}.
     Identify up to 3 recurring patterns, habits, or themes with recommendations.`,
